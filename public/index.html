@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" ng-app="grepCalendarApp">
+  <head>
+    <title>grep-calendar</title>  
+    <meta charset="utf-8">
+    <script src="angular.js"></script>
+    <script src="angular-route.js"></script>
+    <script src="angular-resource.js"></script>
+    <script src="grep-calendar.js"></script>
+  </head>
+  <body id="GrepCalendarCtrl" ng-controller="GrepCalendarCtrl">
+    <form>
+      <input type="url" name="calendar.url" ng-model="calendar.url"></input>
+      <button ng-click="getCalendar(calendar)">Load</button>
+    </form>
+    <div ng-show="calendar.getError">{{calendar.getError}}</div>
+    <div ng-show="calendar.content">
+
+      <ul ng-repeat="cal in calendar.content">
+        <li ng-repeat="event in cal">
+          <span>{{event.time}}</span> - <span>{{event.summary}}</span>
+        </li>
+      </ul>
+            
+      <div>
+        <form>
+          <input type="text" name="calendar.query" ng-model="calendar.query"></input>
+          <button ng-click="grepCalendar(calendar)">Grep</button>
+        </form>
+        <div ng-show="calendar.grepError">{{calendar.grepError}}</div>
+        <div ng-show="calendar.grepped">
+          <ul ng-repeat="cal in calendar.grepped">
+            <li ng-repeat="event in cal">
+              <span>{{event.time}}</span> - <span>{{event.summary}}</span>
+            </li>
+          </ul>
+        </div>
+        <div ng-show="calendar.grepUrl">Looks good? Use this URL for your grepped calendar: <a href="{{calendar.grepUrl}}">{{calendar.grepUrl}}</a>
+      </div>
+
+    </div>
+  </body>
+</html>

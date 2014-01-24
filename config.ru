@@ -1,3 +1,3 @@
-require './grep-calendar.rb'
+require './grep_calendar.rb'
 
 run GrepCalendar
