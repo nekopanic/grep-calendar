@@ -25,7 +25,7 @@ class GrepCalendar < Sinatra::Base
     when 'json'
       response.headers['Content-Type'] = 'application/json'
       url = "#{request.base_url}/calendar.ical?#{request.query_string}"
-      c = calendars.map { |cal| cal.events.map { |event| { time: event.dtstamp.strftime('%B %e, %l%P'), summary: event.summary } } }
+      c = calendars.map { |cal| cal.events.map { |event| { time: event.dtstart.strftime('%B %e, %l%P'), summary: event.summary } } }
       { calendars: c, url: url }.to_json
     when 'ical'
       response.headers['Content-Type'] = 'text/calendar'
