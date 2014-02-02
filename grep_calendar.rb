@@ -20,16 +20,16 @@ class GrepCalendar < Sinatra::Base
     args = { url: params[:url] }
     (args[:query] = params[:query]) if params[:query]
     calendars = grep_calendar(args)
-    
+
     case format
     when 'json'
       response.headers['Content-Type'] = 'application/json'
       url = "#{request.base_url}/calendar.ical?#{request.query_string}"
-      c = calendars.map { |cal| cal.events.map { |event| { time: event.dtstamp, summary: event.summary } } }
+      c = calendars.map { |cal| cal.events.map { |event| { time: event.dtstamp.strftime('%B %e, %l%P'), summary: event.summary } } }
       { calendars: c, url: url }.to_json
     when 'ical'
       response.headers['Content-Type'] = 'text/calendar'
-      calendars.to_ical		
+      calendars.to_ical
     end
   end
 
@@ -41,7 +41,7 @@ class GrepCalendar < Sinatra::Base
   def grep_calendar(args = {})
     raise 'url required' if !args.include?(:url) || args[:url].nil? || args[:url].strip.empty?
     raise 'http or webcal URL required' unless args[:url].start_with?('http') || args[:url].start_with?('webcal')
-    url = args[:url]
+    url = args[:url].strip
     raise 'query required' if args.include?(:query) && (args[:query].nil? || args[:query].strip.empty?)
     query = args[:query]
 
@@ -55,7 +55,7 @@ class GrepCalendar < Sinatra::Base
     else
       calendars.map do |src|
         calendar = Calendar.new.tap do |c|
-          c.events = src.events.find_all { |e| e.summary.include?(query) }
+          c.events = src.events.find_all { |e| e.summary.downcase.include?(query.downcase) }
         end
       end
     end

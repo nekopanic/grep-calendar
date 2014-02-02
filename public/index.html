@@ -3,41 +3,69 @@
   <head>
     <title>grep-calendar</title>  
     <meta charset="utf-8">
-    <script src="angular.js"></script>
-    <script src="angular-route.js"></script>
-    <script src="angular-resource.js"></script>
-    <script src="grep-calendar.js"></script>
+    
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/foundation.css">
+    <script src="js/vendor/modernizr.js"></script>
+    
+    <script src="js/angular.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/angular-resource.js"></script>
+
+    <script src="js/grep-calendar.js"></script>
   </head>
   <body id="GrepCalendarCtrl" ng-controller="GrepCalendarCtrl">
-    <form>
-      <input type="url" name="calendar.url" ng-model="calendar.url"></input>
-      <button ng-click="getCalendar(calendar)">Load</button>
-    </form>
-    <div ng-show="calendar.getError">{{calendar.getError}}</div>
-    <div ng-show="calendar.content">
 
-      <ul ng-repeat="cal in calendar.content">
-        <li ng-repeat="event in cal">
-          <span>{{event.time}}</span> - <span>{{event.summary}}</span>
-        </li>
-      </ul>
-            
-      <div>
+    <div class="row">
+      <div class="large-12 columns text-center">
+        <h1>grep-calendar</h1>
+        <div><p>Just the events you want from your internet calendar feeds.</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 medium-6 columns">
         <form>
-          <input type="text" name="calendar.query" ng-model="calendar.query"></input>
-          <button ng-click="grepCalendar(calendar)">Grep</button>
+          <p><strong>1. Paste your calendar URL</strong></p>
+          <input type="text" name="url" ng-model="calendar.url" placeholder="Paste your calendar URL here"></input>
+          <button ng-click="getCalendar(calendar)">Load Calendar</button>
         </form>
-        <div ng-show="calendar.grepError">{{calendar.grepError}}</div>
-        <div ng-show="calendar.grepped">
-          <ul ng-repeat="cal in calendar.grepped">
-            <li ng-repeat="event in cal">
-              <span>{{event.time}}</span> - <span>{{event.summary}}</span>
-            </li>
-          </ul>
+        
+        <div ng-show="calendar.urlLoading"><div class="preloader" style="margin: 0px; position: relative;"></div></div>
+        <div ng-show="calendar.getError">{{calendar.getError}}</div>
+        <div class="panel" style="max-height: 300px; overflow: scroll;" ng-repeat="cal in calendar.content">
+          <p ng-repeat="event in cal"><strong>{{event.time}}</strong> - {{event.summary}}</p>
         </div>
-        <div ng-show="calendar.grepUrl">Looks good? Use this URL for your grepped calendar: <a href="{{calendar.grepUrl}}">{{calendar.grepUrl}}</a>
+      </div>
+
+      <div class="large-6 medium-6 columns">
+        <div ng-show="calendar.content">
+          <form>
+            <p><strong>2. Enter your search terms</strong></p>
+            <input type="text" name="query" ng-model="calendar.query" placeholder="Search terms here. e.g. 'Kate'"></input>
+            <button ng-click="grepCalendar(calendar)">Grep!</button>
+          </form>
+
+          <div ng-show="calendar.grepLoading"><div class="preloader" style="margin: 0px; position: relative;"></div></div>
+          <div ng-show="calendar.grepError">{{calendar.grepError}}</div>
+          <div ng-show="calendar.grepped">
+            <div class="panel" style="max-height: 300px; overflow: scroll;" ng-repeat="cal in calendar.grepped">
+              <p ng-repeat="event in cal"><strong>{{event.time}}</strong> - {{event.summary}}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
+    
+    <div class="row">
+      <div class="large-6 medium-6 large-offset-3 medium-offset-3 columns">
+        <ul class="pricing-table" ng-show="calendar.grepUrl && calendar.grepped.length > 0 && calendar.grepped[0].length > 0">
+          <li class="title">Looks good? Here's your new calendar URL:</li>
+          <li class="bullet-item"><a href="{{calendar.grepUrl}}">Right click me and select Copy Link Address</a></li>
+        </ul>
+      </div>
+    </div>
+
   </body>
 </html>
